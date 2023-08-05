@@ -5,7 +5,8 @@ class UserController {
   public async storeUser(req: Request, res: Response): Promise<Response> {
     try {
       const user = await User.create(req.body);
-      return res.status(201).json({ user });
+      const { _id, name, email, password, avatar } = user;
+      return res.status(201).json({ user: { id: _id, name, email, password, avatar } });
     } catch (e) {
       return res.status(400).json({ error: 'Check the request fields' });
     }
@@ -13,12 +14,12 @@ class UserController {
 
   public async updateUser(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;
-    const { name, password } = req.body;
+    const { name, password, avatar } = req.body;
     const user = await User.findById(id);
 
-    if (!user) return res.status(400).json({ message: 'User doest not exist' });
+    if (!user) return res.status(400).json({ message: 'User does not exist' });
 
-    await User.findByIdAndUpdate(id, { name, password }, { new: true });
+    await User.findByIdAndUpdate(id, { name, password, avatar }, { new: true });
     return res.status(200).json({ message: 'Successfully updated user' });
   }
 
@@ -28,7 +29,7 @@ class UserController {
       const user = await User.findById(id);
 
       if (!user) {
-        return res.status(400).json({ message: 'User doest not exist' });
+        return res.status(400).json({ message: 'User does not exist' });
       }
       await User.findByIdAndDelete(id);
       return res.status(200).json({ message: 'Successfully deleted user' });
