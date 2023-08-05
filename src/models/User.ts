@@ -1,11 +1,6 @@
-import { Schema, model, Document } from 'mongoose';
+import { Schema, model } from 'mongoose';
+import { UserInterface } from '../interfaces/userInterface';
 
-interface UserInterface extends Document {
-  name: string;
-  email: string;
-  password: string;
-  avatar: string;
-}
 const UserSchema = new Schema({
   name: {
     type: String,
