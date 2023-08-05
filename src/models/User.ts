@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { UserInterface } from '../interfaces/userInterface';
+import bcrypt from 'bcrypt';
 
 const UserSchema = new Schema({
   name: {
@@ -15,10 +16,20 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  avatar: {
+  image: {
     type: String,
     required: true,
   },
+});
+
+UserSchema.pre('save', async function (next): Promise<void> {
+  if (!this.isModified('password')) return next();
+
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(this.password, salt);
+
+  this.password = hash;
+  return next();
 });
 
 export default model<UserInterface>('User', UserSchema);

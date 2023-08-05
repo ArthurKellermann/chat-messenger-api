@@ -5,8 +5,8 @@ class UserController {
   public async storeUser(req: Request, res: Response): Promise<Response> {
     try {
       const user = await User.create(req.body);
-      const { _id, name, email, avatar } = user;
-      return res.status(201).json({ user: { id: _id, name, email, avatar } });
+      const { _id, name, email, image } = user;
+      return res.status(201).json({ user: { id: _id, name, email, image } });
     } catch (e) {
       return res.status(400).json({ error: 'Check the request fields' });
     }
