@@ -32,4 +32,7 @@ UserSchema.pre('save', async function (next): Promise<void> {
   return next();
 });
 
+UserSchema.methods.passwordIsValid = async function (password: string): Promise<boolean> {
+  return await bcrypt.compare(password, this.password);
+};
 export default model<UserInterface>('User', UserSchema);
