@@ -37,13 +37,21 @@ UserSchema.methods.passwordIsValid = async function (password: string): Promise<
   return await bcrypt.compare(password, this.password);
 };
 
-UserSchema.methods.generateToken = async function (id: string, email: string): Promise<string> {
+UserSchema.methods.generateToken = async function (): Promise<string> {
   const jwtSecret = process.env.JWT_SECRET || 'defaultSecret';
   const jwtExpiration = process.env.JWT_EXPIRATION || '3h';
 
-  const token = jwt.sign({ id, email }, jwtSecret, {
-    expiresIn: jwtExpiration,
-  });
+  const token = jwt.sign(
+    {
+      _id: String(this._id),
+      name: this.name,
+      email: this.email,
+    },
+    jwtSecret,
+    {
+      expiresIn: jwtExpiration,
+    },
+  );
 
   return token;
 };

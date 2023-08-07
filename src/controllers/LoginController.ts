@@ -10,9 +10,7 @@ class LoginController {
     if (!user) return res.status(401).json({ message: 'The user does not exist' });
 
     if (!(await user.passwordIsValid(password))) return res.status(401).json({ message: 'Password does not match' });
-    const { id } = user;
-
-    const token = await user.generateToken(id, email);
+    const token = await user.generateToken();
 
     return res.status(200).json({
       message: `Hello ${user.name}`,
