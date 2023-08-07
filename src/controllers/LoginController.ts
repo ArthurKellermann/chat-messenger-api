@@ -1,4 +1,3 @@
-import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import { Request, Response } from 'express';
 
@@ -13,14 +12,12 @@ class LoginController {
     if (!(await user.passwordIsValid(password))) return res.status(401).json({ message: 'Password does not match' });
     const { id } = user;
 
-    const jwtSecret = process.env.JWT_SECRET || 'defaultSecret';
-    const jwtExpiration = process.env.JWT_EXPIRATION || '3h';
+    const token = await user.generateToken(id, email);
 
-    const token = jwt.sign({ id, email }, jwtSecret, {
-      expiresIn: jwtExpiration,
+    return res.status(200).json({
+      message: `Hello ${user.name}`,
+      token,
     });
-
-    return res.status(200).json({ user, token });
   }
 }
 

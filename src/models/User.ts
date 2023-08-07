@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import { Schema, model } from 'mongoose';
 import { UserInterface } from '../interfaces/userInterface';
 import bcrypt from 'bcrypt';
@@ -34,5 +35,16 @@ UserSchema.pre('save', async function (next): Promise<void> {
 
 UserSchema.methods.passwordIsValid = async function (password: string): Promise<boolean> {
   return await bcrypt.compare(password, this.password);
+};
+
+UserSchema.methods.generateToken = async function (id: string, email: string): Promise<string> {
+  const jwtSecret = process.env.JWT_SECRET || 'defaultSecret';
+  const jwtExpiration = process.env.JWT_EXPIRATION || '3h';
+
+  const token = jwt.sign({ id, email }, jwtSecret, {
+    expiresIn: jwtExpiration,
+  });
+
+  return token;
 };
 export default model<UserInterface>('User', UserSchema);

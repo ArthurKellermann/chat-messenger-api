@@ -7,4 +7,5 @@ export interface UserInterface extends Document {
   password?: string;
   image: string;
   passwordIsValid(password: string): Promise<boolean>;
+  generateToken(id: string, email: string): Promise<string>;
 }

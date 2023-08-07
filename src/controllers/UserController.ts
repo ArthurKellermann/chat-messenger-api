@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 import User from '../models/User';
 
 async function userExist(email: string): Promise<boolean> {
-  const user = await User.find({ email });
-  if (!user) return false;
+  const users = await User.find({ email });
+  if (users.length === 0) return false;
   return true;
 }
 
