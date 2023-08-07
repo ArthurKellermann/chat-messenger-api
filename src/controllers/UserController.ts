@@ -1,9 +1,16 @@
 import { Request, Response } from 'express';
 import User from '../models/User';
 
+async function userExist(email: string): Promise<boolean> {
+  const user = await User.find({ email });
+  if (!user) return false;
+  return true;
+}
+
 class UserController {
   public async storeUser(req: Request, res: Response): Promise<Response> {
     try {
+      if (await userExist(req.body.email)) return res.status(400).json({ message: 'The email already exists' });
       const user = await User.create(req.body);
       const { _id, name, email, image } = user;
       return res.status(201).json({ user: { id: _id, name, email, image } });
