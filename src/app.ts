@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import { config } from 'dotenv';
 import userRoutes from './routes/userRoutes';
 import loginRoutes from './routes/loginRoutes';
+import messageRoutes from './routes/messageRoutes';
 
 config();
 
@@ -31,6 +32,7 @@ class App {
   private routes(): void {
     this.express.use('/register', userRoutes);
     this.express.use('/login', loginRoutes);
+    this.express.use('/message/', messageRoutes);
   }
 }
 
