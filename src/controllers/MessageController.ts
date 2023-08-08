@@ -33,6 +33,16 @@ class MessageController {
 
     return res.status(200).json(message);
   }
+
+  public async getAllMessages(req: Request, res: Response): Promise<Response> {
+    if (!req.user) {
+      return res.status(401).json({ error: 'User is not authenticated' });
+    }
+    const senderId = req.user._id;
+
+    const messages = await Message.find({ sender: senderId }).populate('sender addressee', 'name');
+    return res.status(200).json({ messages });
+  }
 }
 
 export default new MessageController();

@@ -8,7 +8,7 @@ interface Request extends ExpressRequest {
 }
 
 class checkAuth {
-  public async authUser(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+  public async authUserByToken(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const { authorization } = req.headers;
 
     if (!authorization) {
@@ -22,8 +22,7 @@ class checkAuth {
         throw new Error('JWT_SECRET is not defined');
       }
 
-      const userData = jwt.verify(token, process.env.JWT_SECRET) as UserInterface;
-      const { _id } = userData;
+      const { _id } = jwt.verify(token, process.env.JWT_SECRET) as UserInterface;
 
       const user = await User.findById(_id);
 
@@ -34,6 +33,20 @@ class checkAuth {
       return next();
     } catch (e) {
       return res.status(401).json({ errors: 'User must be logged in' });
+    }
+  }
+
+  public async authUserByParams(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    try {
+      const { id } = req.params;
+
+      const user = await User.findById(id);
+
+      if (!user) return res.status(401).json({ errors: 'User does not exist' });
+
+      return next();
+    } catch (e) {
+      return res.status(401).json({ errors: 'User is not valid' });
     }
   }
 }
