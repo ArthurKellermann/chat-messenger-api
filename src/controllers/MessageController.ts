@@ -25,9 +25,11 @@ class MessageController {
 
     const message = await Message.create({
       text,
-      sender: req.user._id,
-      addressee: addresseeId,
+      sender: sender?._id,
+      addressee: addressee?._id,
     });
+
+    await message.populate('sender addressee', 'name');
 
     return res.status(200).json(message);
   }
