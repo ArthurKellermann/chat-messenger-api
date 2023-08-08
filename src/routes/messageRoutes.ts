@@ -4,10 +4,11 @@ import checkAuth from '../middlewares/checkAuth';
 
 const { authUserByToken, authUserByParams } = checkAuth;
 
-const { send, getAllMessages } = MessageController;
+const { sendMessage, getAllMessages, getMessagesByUserId } = MessageController;
 const routes = Router();
 
-routes.post('/:id', authUserByParams, authUserByToken, send);
+routes.post('/:id', authUserByParams, authUserByToken, sendMessage);
 routes.get('/', authUserByToken, getAllMessages);
+routes.get('/:id', authUserByParams, authUserByToken, getMessagesByUserId);
 
 export default routes;

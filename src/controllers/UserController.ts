@@ -1,5 +1,12 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import User from '../models/User';
+import { Request as ExpressRequest } from 'express';
+import { UserInterface } from '../interfaces/userInterface';
+
+interface Request extends ExpressRequest {
+  user?: UserInterface;
+  userChat?: UserInterface;
+}
 
 async function userExist(email: string): Promise<boolean> {
   const users = await User.find({ email });
@@ -43,6 +50,11 @@ class UserController {
     } catch (e) {
       return res.status(400).json({ error: 'Check the request fields' });
     }
+  }
+
+  public async getUserInfobyId(req: Request, res: Response): Promise<Response> {
+    const userChatInfo = req.userChat;
+    return res.status(200).json(userChatInfo);
   }
 }
 

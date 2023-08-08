@@ -6,6 +6,6 @@ import checkFormData from '../middlewares/checkFormData';
 const { auth } = LoginController;
 const routes = Router();
 
-routes.post('/', checkFormData, auth);
+routes.post('/login', checkFormData, auth);
 
 export default routes;

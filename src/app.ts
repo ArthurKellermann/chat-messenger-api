@@ -30,8 +30,8 @@ class App {
   }
 
   private routes(): void {
-    this.express.use('/register', userRoutes);
-    this.express.use('/login', loginRoutes);
+    this.express.use('/user', userRoutes);
+    this.express.use('/user', loginRoutes);
     this.express.use('/message/', messageRoutes);
   }
 }
