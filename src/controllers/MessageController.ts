@@ -2,6 +2,7 @@ import { Request as ExpressRequest, Response } from 'express';
 import Message from '../models/Message';
 import { UserInterface } from '../interfaces/userInterface';
 import User from '../models/User';
+import { MessageInterface } from '../interfaces/messageInterface';
 
 interface Request extends ExpressRequest {
   user?: UserInterface;
@@ -55,15 +56,9 @@ class MessageController {
   public async getMessagesByUserId(req: Request, res: Response): Promise<Response> {
     const loggedUserId = req.user?._id;
     const userChatId = req.userChat?._id;
-    const messages = await Message.find({
-      // return a array
-      $or: [
-        { $and: [{ sender: loggedUserId }, { addressee: userChatId }] },
-        { $and: [{ sender: userChatId }, { adressee: loggedUserId }] },
-      ],
-    }).sort('createdAt');
+    const messages = await Message.findChat(String(loggedUserId), String(userChatId));
 
-    const chatMessages = messages.map((message) => {
+    const chatMessages = messages.map((message: MessageInterface) => {
       return {
         text: message.text,
         createdAt: message.createdAt,

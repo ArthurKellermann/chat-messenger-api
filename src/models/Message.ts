@@ -1,5 +1,9 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Model } from 'mongoose';
 import { MessageInterface } from '../interfaces/messageInterface';
+
+interface StaticMessage extends Model<MessageInterface> {
+  findChat(loggedUserId: string, userChatId: string): Promise<MessageInterface[]>;
+}
 
 const MessageSchema = new Schema(
   {
@@ -10,12 +14,12 @@ const MessageSchema = new Schema(
     sender: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      requried: true,
+      required: true,
     },
     addressee: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      requried: true,
+      required: true,
     },
   },
   {
@@ -23,4 +27,13 @@ const MessageSchema = new Schema(
   },
 );
 
-export default model<MessageInterface>('Message', MessageSchema);
+MessageSchema.statics.findChat = function (loggedUserId: string, userChatId: string) {
+  return this.find({
+    $or: [
+      { $and: [{ sender: loggedUserId }, { addressee: userChatId }] },
+      { $and: [{ sender: userChatId }, { addressee: loggedUserId }] },
+    ],
+  });
+};
+
+export default model<MessageInterface, StaticMessage>('Message', MessageSchema);

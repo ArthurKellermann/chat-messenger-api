@@ -1,5 +1,6 @@
 import { Response } from 'express';
 import User from '../models/User';
+import Message from '../models/Message';
 import { Request as ExpressRequest } from 'express';
 import { UserInterface } from '../interfaces/userInterface';
 
@@ -55,6 +56,34 @@ class UserController {
   public async getUserInfobyId(req: Request, res: Response): Promise<Response> {
     const userChatInfo = req.userChat;
     return res.status(200).json(userChatInfo);
+  }
+
+  public async getUsersLastMessages(req: Request, res: Response): Promise<Response> {
+    const loggedUserId = req.user?._id;
+
+    const users = await User.find({ _id: { $ne: loggedUserId } });
+
+    const lastUserMessages = await Promise.all(
+      users.map(async (user) => {
+        const messages = await Message.find({
+          $or: [
+            { $and: [{ sender: loggedUserId }, { addressee: user._id }] },
+            { $and: [{ sender: user._id }, { addressee: loggedUserId }] },
+          ],
+        })
+          .sort('-createdAt')
+          .limit(1);
+        return {
+          _id: user._id,
+          name: user.name,
+          image: user.image,
+          lastUserMessage: messages[0] ? messages[0]?.text : null,
+          lastUserMessageDate: messages[0] ? messages[0]?.createdAt : null,
+        };
+      }),
+    );
+
+    return res.status(200).json({ lastUserMessages });
   }
 }
 
