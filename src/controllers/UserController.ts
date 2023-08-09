@@ -3,7 +3,7 @@ import User from '../models/User';
 import Message from '../models/Message';
 import { Request as ExpressRequest } from 'express';
 import { UserInterface } from '../interfaces/userInterface';
-import MessageService from '../services/messageService';
+import MessageService from '../services/MessageService';
 import UserService from '../services/UserService';
 
 interface Request extends ExpressRequest {
@@ -14,37 +14,15 @@ interface Request extends ExpressRequest {
 class UserController {
   public async storeUser(req: Request, res: Response): Promise<Response> {
     try {
-      if (await UserService.userExist(req.body.email))
+      if (await UserService.userExist(req.body.email)) {
         return res.status(400).json({ message: 'The email already exists' });
-      const user = await User.create(req.body);
-      const { _id, name, email, image } = user;
-      return res.status(201).json({ user: { id: _id, name, email, image } });
-    } catch (e) {
-      return res.status(400).json({ error: 'Check the request fields' });
-    }
-  }
-
-  public async updateUser(req: Request, res: Response): Promise<Response> {
-    const { id } = req.params;
-    const { name, password, avatar } = req.body;
-    const user = await User.findById(id);
-
-    if (!user) return res.status(400).json({ message: 'User does not exist' });
-
-    await User.findByIdAndUpdate(id, { name, password, avatar }, { new: true });
-    return res.status(200).json({ message: 'Successfully updated user' });
-  }
-
-  public async deleteUser(req: Request, res: Response): Promise<Response> {
-    try {
-      const { id } = req.params;
-      const user = await User.findById(id);
-
-      if (!user) {
-        return res.status(400).json({ message: 'User does not exist' });
       }
-      await User.findByIdAndDelete(id);
-      return res.status(200).json({ message: 'Successfully deleted user' });
+      const { name, email, password } = req.body;
+      const userImage = req.file?.path;
+
+      const user = await User.create({ name, email, password, userImage });
+
+      return res.status(201).json(user);
     } catch (e) {
       return res.status(400).json({ error: 'Check the request fields' });
     }

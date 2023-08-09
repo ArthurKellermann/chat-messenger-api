@@ -1,5 +1,5 @@
 import { Request, Express } from 'express';
-import multer, { FileFilterCallback, MulterError } from 'multer';
+import multer, { FileFilterCallback } from 'multer';
 import { extname, resolve } from 'path';
 
 const storage = multer.diskStorage({
@@ -15,14 +15,16 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: FileFilterCallb
   if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
     cb(null, true);
   } else {
-    cb(new MulterError('Invalid file type'), false);
+    cb(null, false);
   }
 };
 
-export default {
+const upload = multer({
   storage,
   limits: {
     fileSize: 1024 * 1024 * 5,
   },
   fileFilter,
-};
+});
+
+export default upload;

@@ -5,7 +5,7 @@ export interface UserInterface extends Document {
   name?: string;
   email: string;
   password?: string;
-  image: string;
+  userImage: string;
   passwordIsValid(password: string): Promise<boolean>;
   generateToken(): Promise<string>;
 }
@@ -13,7 +13,7 @@ export interface UserInterface extends Document {
 export interface SimpleUserMessage {
   _id: Types.ObjectId | string;
   name?: string;
-  image: string;
+  userImage: string;
   lastMessage: string | null;
   lastMessageDate: Date | null;
 }

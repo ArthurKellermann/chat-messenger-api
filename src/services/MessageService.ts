@@ -6,7 +6,7 @@ class MessageService {
     return {
       _id: user._id,
       name: user.name,
-      image: user.image,
+      userImage: user.userImage,
       lastMessage: messages[0]?.text || null,
       lastMessageDate: messages[0]?.createdAt || null,
     };
