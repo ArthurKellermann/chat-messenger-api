@@ -3,22 +3,19 @@ import User from '../models/User';
 import Message from '../models/Message';
 import { Request as ExpressRequest } from 'express';
 import { UserInterface } from '../interfaces/userInterface';
+import MessageService from '../services/messageService';
+import UserService from '../services/UserService';
 
 interface Request extends ExpressRequest {
   user?: UserInterface;
   userChat?: UserInterface;
 }
 
-async function userExist(email: string): Promise<boolean> {
-  const users = await User.find({ email });
-  if (users.length === 0) return false;
-  return true;
-}
-
 class UserController {
   public async storeUser(req: Request, res: Response): Promise<Response> {
     try {
-      if (await userExist(req.body.email)) return res.status(400).json({ message: 'The email already exists' });
+      if (await UserService.userExist(req.body.email))
+        return res.status(400).json({ message: 'The email already exists' });
       const user = await User.create(req.body);
       const { _id, name, email, image } = user;
       return res.status(201).json({ user: { id: _id, name, email, image } });
@@ -58,12 +55,12 @@ class UserController {
     return res.status(200).json(userChatInfo);
   }
 
-  public async getUsersLastMessages(req: Request, res: Response): Promise<Response> {
+  public async getLastMessagesFromEachUser(req: Request, res: Response): Promise<Response> {
     const loggedUserId = req.user?._id;
 
     const users = await User.find({ _id: { $ne: loggedUserId } });
 
-    const lastUserMessages = await Promise.all(
+    const lastMessagesFromEachUser = await Promise.all(
       users.map(async (user) => {
         const messages = await Message.find({
           $or: [
@@ -73,17 +70,18 @@ class UserController {
         })
           .sort('-createdAt')
           .limit(1);
-        return {
-          _id: user._id,
-          name: user.name,
-          image: user.image,
-          lastUserMessage: messages[0] ? messages[0]?.text : null,
-          lastUserMessageDate: messages[0] ? messages[0]?.createdAt : null,
-        };
+        return MessageService.getUserMessageResult(messages, user);
       }),
     );
 
-    return res.status(200).json({ lastUserMessages });
+    const messagesInOrder = lastMessagesFromEachUser.sort((a, b) => {
+      const dateA = a.lastMessageDate?.getTime() || 0;
+      const dateB = b.lastMessageDate?.getTime() || 0;
+
+      return dateB - dateA;
+    });
+
+    return res.status(200).json(messagesInOrder);
   }
 }
 
