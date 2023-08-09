@@ -18,7 +18,7 @@ class UserController {
         return res.status(400).json({ message: 'The email already exists' });
       }
       const { name, email, password } = req.body;
-      const userImage = req.file?.path;
+      const userImage = req.file?.filename;
 
       const user = await User.create({ name, email, password, userImage });
 
