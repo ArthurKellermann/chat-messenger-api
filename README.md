@@ -4,7 +4,7 @@ This project provides a REST API for a chat messenger application. Users can reg
 
 ## Installation
 
-Install ts-api-chat with npm
+Install Chat Messenger with npm
 
 ```bash
 git clone https://github.com/ArthurKellermann/ts-api-chat.git
@@ -28,7 +28,7 @@ Building this project was a valuable experience in creating a secure chat system
 #### User Authentication & Registration
 
 ```http
-  POST /login
+  POST /user/login
 ```
 
 | Parameter      | Type     | Description                       |
@@ -37,7 +37,7 @@ Building this project was a valuable experience in creating a secure chat system
 | `password`     | `string` | **Required**. User's password     |
 
 ```http
-  POST /register
+  POST /user/register
 ```
 
 | Parameter      | Type     | Description                       |
@@ -50,7 +50,7 @@ Building this project was a valuable experience in creating a secure chat system
 #### Messaging
 
 ```http
-  POST /:id
+  POST /message/:id
 ```
 
 | Parameter      | Type     | Description                             |
@@ -59,7 +59,7 @@ Building this project was a valuable experience in creating a secure chat system
 | `id`           | `string` | **Required**. Recipient user's ID       |
 
 ```http
-  GET /
+  GET /message
 ```
 
 | Parameter      | Type     | Description                             |
@@ -67,7 +67,7 @@ Building this project was a valuable experience in creating a secure chat system
 | `api_key`      | `string` | **Required**. Your API key              |
 
 ```http
-  GET /:id
+  GET /message/:id
 ```
 
 | Parameter      | Type     | Description                             |
@@ -77,7 +77,7 @@ Building this project was a valuable experience in creating a secure chat system
 #### User Information
 
 ```http
-  GET /:id
+  GET /user/:id
 ```
 
 | Parameter      | Type     | Description                             |
@@ -85,7 +85,7 @@ Building this project was a valuable experience in creating a secure chat system
 | `id`           | `string` | **Required**. User ID to retrieve info  |
 
 ```http
-  GET /
+  GET /user
 ```
 
 | Parameter      | Type     | Description                             |
@@ -98,6 +98,7 @@ Building this project was a valuable experience in creating a secure chat system
 - Real-time messaging
 - User profile and avatar image
 - Message history retrieval
+  
 ## Contributing
 
 Contributions are always welcome!  Feel free to clone the repository!
